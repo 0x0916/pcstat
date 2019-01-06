@@ -36,6 +36,8 @@ type PcStatusList []pcstat.PcStatus
 
 func (stats PcStatusList) formatUnicode() {
 	maxName := stats.maxNameLen()
+	pages := 0
+	cached := 0
 
 	// create horizontal grid line
 	pad := strings.Repeat("─", maxName+2)
@@ -59,13 +61,20 @@ func (stats PcStatusList) formatUnicode() {
 		// I tried a few different formats only this one kept the decimals aligned
 		fmt.Printf("│ %s%s │ %-15d│ %-11d│ %-10d│ %07.3f │\n",
 			pcs.Name, pad, pcs.Size, pcs.Pages, pcs.Cached, pcs.Percent)
+		pages += pcs.Pages
+		cached += pcs.Cached
 	}
 
+	fmt.Println(bot)
+	pad = strings.Repeat(" ", maxName-5)
+	fmt.Printf("| Total%s | %13dMB| %-11d| %8dMB|         |\n", pad, pages*4/1024, pages, cached*4/1024)
 	fmt.Println(bot)
 }
 
 func (stats PcStatusList) formatText() {
 	maxName := stats.maxNameLen()
+	pages := 0
+	cached := 0
 
 	// create horizontal grid line
 	pad := strings.Repeat("-", maxName+2)
@@ -89,13 +98,19 @@ func (stats PcStatusList) formatText() {
 		// I tried a few different formats only this one kept the decimals aligned
 		fmt.Printf("| %s%s | %-15d| %-11d| %-10d| %07.3f |\n",
 			pcs.Name, pad, pcs.Size, pcs.Pages, pcs.Cached, pcs.Percent)
+		pages += pcs.Pages
+		cached += pcs.Cached
 	}
-
+	fmt.Println(bot)
+	pad = strings.Repeat(" ", maxName-5)
+	fmt.Printf("| Total%s | %13dMB| %-11d| %8dMB|         |\n", pad, pages*4/1024, pages, cached*4/1024)
 	fmt.Println(bot)
 }
 
 func (stats PcStatusList) formatPlain() {
 	maxName := stats.maxNameLen()
+	pages := 0
+	cached := 0
 
 	// -nohdr may be chosen to save 2 lines of precious vertical space
 	if !nohdrFlag {
@@ -110,7 +125,11 @@ func (stats PcStatusList) formatPlain() {
 		// I tried a few different formats only this one kept the decimals aligned
 		fmt.Printf("%s%s  %-15d %-11d %-10d %07.3f\n",
 			pcs.Name, pad, pcs.Size, pcs.Pages, pcs.Cached, pcs.Percent)
+		pages += pcs.Pages
+		cached += pcs.Cached
 	}
+	pad := strings.Repeat(" ", maxName-5)
+	fmt.Printf("Total%s  %13dMB %11d %8dMB         \n", pad, pages*4/1024, pages, cached*4/1024)
 }
 
 func (stats PcStatusList) formatTerse() {
